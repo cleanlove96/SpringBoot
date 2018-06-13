@@ -1,0 +1,142 @@
+/*****************************************************
+ *  HISTORY
+ *  FileName:UserController.java
+ *  Package:com.controller.system
+ *  Project:j1803_2_JWXT
+ *  Version:1.0
+ *  Date:2018年5月29日 zm创建文件
+ **********修改记录*************
+ * Date:          Author:
+ *
+ *******************************************************/
+package com.controller.system;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.model.system.Menu;
+import com.model.system.User;
+import com.service.system.MenuService;
+import com.service.system.UserService;
+
+import framework.controller.BaseController;
+
+/**
+ * <p>
+ * 
+ * </p>
+ * 
+ * @Copyright (C),华清远见
+ * @author zm
+ * @Date:2018年5月29日
+ */
+@Controller
+@RequestMapping("/userController")
+public class UserController extends BaseController {
+	/**  */
+	private static final long serialVersionUID = 4132695702680720162L;
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private MenuService menuService;
+	@RequestMapping("/login.do")
+	/***
+	 * 
+	 * <p>
+	 * 通过userId查找这个人的所有权限 并返回到前台，通过前台的判定 找出父Id为root的权限
+	 * </p>
+	 * @author zm
+	 * @Date 2018年5月30日
+	 * @param request
+	 * @param response
+	 * @param session
+	 * @param model
+	 * @param user
+	 * @return
+	 */
+	public String login(HttpServletRequest request, HttpServletResponse response, HttpSession session, Model model,
+			User user) {
+		/***
+		 * 判断用户的登录名和密码是否为空，如果为空则提示输入错误， 如果不为空再判断账号密码是否匹配，如果匹配成功，则跳转到主界面
+		 */
+		 //1.收集数据
+		// 3.调用相关业务
+		User u = userService.queryUserByLoginAmeAndPassword(user);
+
+		if (u == null) {
+			model.addAttribute("loginError", "用户名或密码错误");
+
+			// 2.跳转页面
+			return "login";
+		} else {
+			model.addAttribute("loginSuccess", "登录成功");
+			// 2.跳转页面
+			session.setAttribute("USER", u);
+			List<Menu> listmenu = menuService.queryMenuByUserId(u.getUserId());
+			model.addAttribute("listmenu", listmenu);
+			for (Menu menu1 : listmenu) {
+				System.out.println("++++1" + menu1.toString());
+			}
+			return "main";
+		}
+	}
+	/***
+	 * 
+	 * <p>
+	 * 动态显示权限
+	 * </p>
+	 * @author zm
+	 * @Date 2018年5月30日
+	 * @param request
+	 * @param response
+	 * @param session
+	 * @param model
+	 * @param user
+	 * @param menuId
+	 * @return
+	 */
+	@RequestMapping("/queryAnthortySon.do")
+	public String queryAnthortySon(HttpServletRequest request, HttpServletResponse response, HttpSession session, Model model,
+			User user,String menuId) {
+		/***
+		 * 判断用户的登录名和密码是否为空，如果为空则提示输入错误， 如果不为空再判断账号密码是否匹配，如果匹配成功，则跳转到主界面
+		 */
+		 //1.收集数据
+		// 3.调用相关业务
+		User u = (User) session.getAttribute("USER");
+		String uId=u.getUserId();
+		 System.out.println("menuId+++++++++++++++++"+menuId);
+		if (u == null) {
+			model.addAttribute("loginError", "用户名或密码错误");
+
+			// 2.跳转页面
+			return "login";
+		} else {
+			model.addAttribute("loginSuccess", "登录成功");
+			// 2.跳转页面
+			session.setAttribute("USER", u);	
+			
+			List<Menu> listmenuson = menuService.queryMenuSelectedSonByMenuId(uId,menuId);
+			model.addAttribute("listmenuson", listmenuson);
+			for (Menu menu : listmenuson) {
+				System.out.println("menu-----------"+menu.toString());
+			}
+			List<Menu> listmenu = menuService.queryAllMenuXZByUserId(u.getUserId());
+			model.addAttribute("listmenu", listmenu);
+			for (Menu menu1 : listmenu) {
+				System.out.println("menu++++++++++++"+menu1.toString());
+			}
+			System.out.println(listmenu.toString());
+			return "main";
+		}
+	}
+	
+}

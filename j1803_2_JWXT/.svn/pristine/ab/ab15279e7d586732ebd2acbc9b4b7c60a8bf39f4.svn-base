@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.system.PlaceMapper">
+	<resultMap id="BaseResultMap" type="com.model.system.Place">
+		<id column="place_id" property="placeId" jdbcType="VARCHAR" />
+		<result column="place_name" property="placeName" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		place_id, place_name
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from place
+		where place_id = #{placeId,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from place
+		where place_id = #{placeId,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.model.system.Place">
+		insert into place (place_id, place_name)
+		values (#{placeId,jdbcType=VARCHAR}, #{placeName,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.model.system.Place">
+		insert into place
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="placeId != null">
+				place_id,
+			</if>
+			<if test="placeName != null">
+				place_name,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="placeId != null">
+				#{placeId,jdbcType=VARCHAR},
+			</if>
+			<if test="placeName != null">
+				#{placeName,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.model.system.Place">
+		update place
+		<set>
+			<if test="placeName != null">
+				place_name = #{placeName,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where place_id = #{placeId,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.model.system.Place">
+		update place
+		set place_name = #{placeName,jdbcType=VARCHAR}
+		where place_id = #{placeId,jdbcType=VARCHAR}
+	</update>
+	<select id="queryAllPlace" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from place
+	</select>
+</mapper>

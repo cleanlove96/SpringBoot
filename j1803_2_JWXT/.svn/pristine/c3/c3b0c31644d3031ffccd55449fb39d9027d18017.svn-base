@@ -1,0 +1,39 @@
+/*****************************************************
+ *  HISTORY
+ *  FileName:UserServiceimp.java
+ *  Package:com.service.system.impl
+ *  Project:j1803_2_JWXT
+ *  Version:1.0
+ *  Date:2018年5月29日 zm创建文件
+ **********修改记录*************
+ * Date:          Author:
+ *
+ *******************************************************/
+package com.service.system.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.dao.system.UserMapper;
+import com.model.system.User;
+import com.service.system.UserService;
+
+/**
+ * <p>
+ * 
+ * </p>	
+ * @Copyright (C),华清远见
+ * @author zm
+ * @Date:2018年5月29日
+ */
+@Service
+public class UserServiceImpl implements UserService {
+	@Autowired
+	private UserMapper userMapper;
+
+	@Override
+	public User queryUserByLoginAmeAndPassword(User user) {
+		User uu=userMapper.queryUserByLoginAmeAndPassword(user);
+		return uu;
+	}
+}

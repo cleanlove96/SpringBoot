@@ -1,0 +1,19 @@
+package com.service.system;
+
+import com.model.system.Time;
+
+import framework.utils.pageUtil.PagedResult;
+
+public interface TimeService {
+
+	PagedResult<Time> getAllByPage(Integer pageNumber, Integer pageSize);
+
+	int addTime(Time time);
+
+	int deleteTimeById(String timeId);
+
+	Time querytimeId(String timeId);
+
+	int updateTime(Time time);
+
+}

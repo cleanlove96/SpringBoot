@@ -1,0 +1,209 @@
+package com.controller.system;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+
+import com.model.system.Student;
+import com.model.system.User;
+import com.service.system.StudentService;
+
+import framework.controller.BaseController;
+
+import framework.utils.pageUtil.PagedResult;
+
+/**
+ * <p>
+ * 学生
+ * </p>
+ * 
+ * @Copyright (C),华清远见
+ * @author LGH
+ * @Date:2018年5月16日
+ */
+@Controller
+@RequestMapping("/studentController")
+public class StudentController extends BaseController {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2200134348470324215L;
+	@Autowired
+	private StudentService studentService;
+
+
+	
+	/**
+	 * <p>
+	 * 列表
+	 * </p>
+	 * 
+	 * @author LGH
+	 * @Date 2018年5月16日
+	 * @param request
+	 * @param response
+	 * @param session
+	 * @param model
+	 * @param student
+	 * @return
+	 */
+	@RequestMapping(value = "listPage.do", produces = "application/json;charset=utf-8")
+	public ModelAndView listPage(@RequestParam(value = "pageNumber", defaultValue = "1") Integer pageNumber,
+			@RequestParam(value = "pageSize", defaultValue = "3") Integer pageSize) {
+		System.out.println("------------------传统---------------------");
+		ModelAndView mv = new ModelAndView();
+		// 当前页和每页的条数
+		// 传入数据到分页工具类
+		PagedResult<Student> pageResult = studentService.getAllByPage(pageNumber, pageSize);
+		// 数据传递到前台页面展示层
+		mv.addObject("pageResult", pageResult);
+		mv.setViewName("student/student_list");
+		return mv;
+	}
+
+	/**
+	 * <p>
+	 * 增加
+	 * </p>
+	 * 
+	 * @author LGH
+	 * @Date 2018年5月16日
+	 * @param request
+	 * @param response
+	 * @param session
+	 * @param model
+	 * @param student
+	 * @return
+	 */
+
+	
+	
+	@RequestMapping("add.do")
+	public String add(HttpServletRequest request, HttpServletResponse response, HttpSession session, Model model,
+			Student student,String sId) {
+		// 1、收集数据
+		System.err.println("--------------------" + student);
+		// 3.调用相关业务
+		// 维护
+		
+		student.setCreateTime(new Date());
+		int n = studentService.addStudent(student);
+
+		// 2、跳转页面
+		return "redirect:/studentController/listPage.do";
+
+	}
+
+	/**
+	 * <p>
+	 * 删除
+	 * </p>
+	 * 
+	 * @author LGH
+	 * @Date 2018年5月16日
+	 * @param request
+	 * @param response
+	 * @param session
+	 * @param model
+	 * @param student
+	 * @return
+	 */
+	@RequestMapping("delete.do")
+	public String delete(HttpServletRequest request, HttpServletResponse response, HttpSession session, Model model,
+			Student student, String sId) {
+		int m = studentService.deleteStudentBySId(sId);
+		return "redirect:/studentController/listPage.do";
+	}
+
+	/**
+	 * <p>
+	 * 修改
+	 * </p>
+	 * 
+	 * @author LGH
+	 * @Date 2018年5月16日
+	 * @param request
+	 * @param response
+	 * @param session
+	 * @param model
+	 * @param student
+	 * @return
+	 */
+	@RequestMapping("/updateUI.do")
+	public String updateUI(HttpServletRequest request, HttpServletResponse response, HttpSession session, Model model,
+			Student student, String sId) {
+		Student s = studentService.querysId(sId);
+		model.addAttribute("student", s);
+
+		return "student/student_update";
+	}
+
+	@RequestMapping("/update.do")
+	public String update(HttpServletRequest request, HttpServletResponse response, HttpSession session, Model model,
+			Student student, String sId) {
+		// 1.收集数据
+		System.out.println("---------------------------------" + student);
+		// 3.调用相关业务
+		int mm=studentService.updateStudent(student);
+		return "redirect:/studentController/listPage.do";
+	}
+	
+	/**
+	 * <p>
+	 * 批量删除
+	 * </p>
+	 * 
+	 * @author LGH
+	 * @Date 2018年5月16日
+	 * @param request
+	 * @param response
+	 * @param session
+	 * @param model
+	 * @param student
+	 * @return
+	 */
+	@RequestMapping(value = "/deleteMany.do")
+	public String deleteMany(HttpServletRequest request, HttpServletResponse response, HttpSession session, Model model,
+			Student student, String[] ids) {
+		if(ids==null){return "redirect:/studentController/listPage.do";}
+		for (String id : ids) {
+			System.out.println(id);
+			int m=studentService.deleteStudentBySId(id);
+		}
+		return "redirect:/studentController/listPage.do";
+	}
+	
+	
+	@RequestMapping(value = "search.do", produces = "application/json;charset=utf-8")
+	public ModelAndView search(@RequestParam(value = "pageNumber", defaultValue = "1") Integer pageNumber,
+			@RequestParam(value = "pageSize", defaultValue = "3") Integer pageSize,HttpSession session,HttpServletRequest request,String str) {
+		ModelAndView mv = new ModelAndView();
+		if(str!=null) {
+			String like =request.getParameter("str");
+			session.setAttribute("str", like);
+		}
+		String str1 = (String)session.getAttribute("str");
+		// 当前页和每页的条数
+		// 传入数据到分页工具类
+		System.out.println("str1"+str1);
+		PagedResult<Student> pageResult = studentService.queryLikeName(pageNumber, pageSize,str1);
+		// 数据传递到前台页面展示层
+		System.out.println(pageResult+"pageResult");
+		mv.addObject("pageResult", pageResult);
+		mv.setViewName("student/student_list");
+		return mv;
+
+	}
+}

@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.system.ScheduleMapper">
+	<resultMap id="BaseResultMap"
+		type="com.model.system.Schedule">
+		<id column="schedule_id" property="scheduleId" jdbcType="VARCHAR" />
+		<result column="subject_id" property="subjectId"
+			jdbcType="VARCHAR" />
+		<result column="t_id" property="tId" jdbcType="VARCHAR" />
+		<result column="time_id" property="timeId" jdbcType="VARCHAR" />
+		<result column="place_id" property="placeId" jdbcType="VARCHAR" />
+		<result column="total" property="total" jdbcType="INTEGER" />
+	</resultMap>
+	<resultMap id="BaseResultMapScheduleResult"
+		type="com.model.system.ScheduleResult">
+		<id column="schedule_id" property="scheduleId" jdbcType="VARCHAR" />
+		<result column="subject_name" property="subjectName"
+			jdbcType="VARCHAR" />
+		<result column="t_name" property="tName" jdbcType="VARCHAR" />
+		<result column="time_name" property="timeName"
+			jdbcType="VARCHAR" />
+		<result column="place_name" property="placeName"
+			jdbcType="VARCHAR" />
+		<result column="total" property="total" jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		schedule_id, subject_id, t_id, time_id, place_id, total
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from schedule
+		where schedule_id = #{scheduleId,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from
+		schedule
+		where schedule_id = #{scheduleId,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.model.system.Schedule">
+		insert into schedule
+		(schedule_id, subject_id, t_id,
+		time_id, place_id, total
+		)
+		values
+		(#{scheduleId,jdbcType=VARCHAR}, #{subjectId,jdbcType=VARCHAR},
+		#{tId,jdbcType=VARCHAR},
+		#{timeId,jdbcType=VARCHAR},
+		#{placeId,jdbcType=VARCHAR}, #{total,jdbcType=INTEGER}
+		)
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.model.system.Schedule">
+		insert into schedule
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="scheduleId != null">
+				schedule_id,
+			</if>
+			<if test="subjectId != null">
+				subject_id,
+			</if>
+			<if test="tId != null">
+				t_id,
+			</if>
+			<if test="timeId != null">
+				time_id,
+			</if>
+			<if test="placeId != null">
+				place_id,
+			</if>
+			<if test="total != null">
+				total,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="scheduleId != null">
+				#{scheduleId,jdbcType=VARCHAR},
+			</if>
+			<if test="subjectId != null">
+				#{subjectId,jdbcType=VARCHAR},
+			</if>
+			<if test="tId != null">
+				#{tId,jdbcType=VARCHAR},
+			</if>
+			<if test="timeId != null">
+				#{timeId,jdbcType=VARCHAR},
+			</if>
+			<if test="placeId != null">
+				#{placeId,jdbcType=VARCHAR},
+			</if>
+			<if test="total != null">
+				#{total,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.model.system.Schedule">
+		update schedule
+		<set>
+			<if test="subjectId != null">
+				subject_id = #{subjectId,jdbcType=VARCHAR},
+			</if>
+			<if test="tId != null">
+				t_id = #{tId,jdbcType=VARCHAR},
+			</if>
+			<if test="timeId != null">
+				time_id = #{timeId,jdbcType=VARCHAR},
+			</if>
+			<if test="placeId != null">
+				place_id = #{placeId,jdbcType=VARCHAR},
+			</if>
+			<if test="total != null">
+				total = #{total,jdbcType=INTEGER},
+			</if>
+		</set>
+		where schedule_id = #{scheduleId,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.model.system.Schedule">
+		update schedule
+		set subject_id =
+		#{subjectId,jdbcType=VARCHAR},
+		t_id = #{tId,jdbcType=VARCHAR},
+		time_id =
+		#{timeId,jdbcType=VARCHAR},
+		place_id = #{placeId,jdbcType=VARCHAR},
+		total = #{total,jdbcType=INTEGER}
+		where schedule_id =
+		#{scheduleId,jdbcType=VARCHAR}
+	</update>
+	<select id="selectForenoonSchedule"
+		resultMap="BaseResultMapScheduleResult">
+		SELECT
+		`subject`.subject_name,
+		teacher.t_name,
+		time.time_name,
+		place.place_name,
+		schedule.schedule_id,
+		schedule.total
+		FROM
+		`schedule`
+		INNER JOIN `subject` ON `schedule`.subject_id = `subject`.subject_id
+		AND
+		`schedule`.subject_id = `subject`.subject_id
+		INNER JOIN teacher ON
+		`schedule`.t_id = teacher.t_id
+		INNER JOIN time ON `schedule`.time_id =
+		time.time_id
+		INNER JOIN place ON `schedule`.place_id = place.place_id
+		WHERE time.time_name like '%上午%'
+	</select>
+	<select id="selectAfternoonSchedule"
+		resultMap="BaseResultMapScheduleResult">
+		SELECT
+		`subject`.subject_name,
+		teacher.t_name,
+		time.time_name,
+		place.place_name,
+		schedule.schedule_id,
+		schedule.total
+		FROM
+		`schedule`
+		INNER JOIN `subject` ON `schedule`.subject_id = `subject`.subject_id
+		AND
+		`schedule`.subject_id = `subject`.subject_id
+		INNER JOIN teacher ON
+		`schedule`.t_id = teacher.t_id
+		INNER JOIN time ON `schedule`.time_id =
+		time.time_id
+		INNER JOIN place ON `schedule`.place_id = place.place_id
+		WHERE time.time_name like '%下午%'
+	</select>
+
+	<select id="selectForenoonScheduleByUserId"
+		resultMap="BaseResultMapScheduleResult"
+		parameterType="java.lang.String">
+		SELECT
+		`subject`.subject_name,
+		teacher.t_name,
+		time.time_name,
+		place.place_name
+		FROM
+		`schedule`
+		INNER JOIN `subject` ON
+		`schedule`.subject_id = `subject`.subject_id AND
+		`schedule`.subject_id
+		= `subject`.subject_id
+		INNER JOIN teacher ON `schedule`.t_id =
+		teacher.t_id
+		INNER JOIN time ON `schedule`.time_id = time.time_id
+		INNER
+		JOIN place ON `schedule`.place_id = place.place_id
+		WHERE schedule.t_id
+		= #{userId,jdbcType=VARCHAR} and time.time_name like '%上午%'
+	</select>
+	<select id="selectAfternoonScheduleByUserId"
+		resultMap="BaseResultMapScheduleResult"
+		parameterType="java.lang.String">
+		SELECT
+		`subject`.subject_name,
+		teacher.t_name,
+		time.time_name,
+		place.place_name
+		FROM
+		`schedule`
+		INNER JOIN `subject` ON
+		`schedule`.subject_id =
+		`subject`.subject_id AND
+		`schedule`.subject_id =
+		`subject`.subject_id
+		INNER JOIN teacher ON `schedule`.t_id =
+		teacher.t_id
+		INNER JOIN time ON
+		`schedule`.time_id = time.time_id
+		INNER
+		JOIN place ON
+		`schedule`.place_id = place.place_id
+		WHERE schedule.t_id =
+		#{userId,jdbcType=VARCHAR} and time.time_name like '%下午%'
+	</select>
+	<select id="queryInfo" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from schedule
+		where t_id = #{1} and
+		time_id = #{2}
+		or
+		time_id = #{2} and
+		place_id = #{3}
+	</select>
+	<select id="selectAllSchedule"
+		resultMap="BaseResultMapScheduleResult">
+		SELECT
+		`schedule`.schedule_id,
+		`subject`.subject_name,
+		teacher.t_name,
+		time.time_name,
+		place.place_name
+		FROM
+		`schedule`
+		INNER JOIN `subject` ON `subject`.subject_id = `schedule`.subject_id
+		INNER JOIN teacher ON teacher.t_id = `schedule`.t_id
+		INNER JOIN time ON time.time_id = `schedule`.time_id
+		INNER JOIN place ON place.place_id = `schedule`.place_id
+	</select>
+</mapper>

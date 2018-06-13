@@ -1,0 +1,32 @@
+package com.dao.system;
+
+import java.util.List;
+
+import com.model.system.User;
+
+public interface UserMapper {
+    int deleteByPrimaryKey(String userId);
+
+    int insert(User record);
+
+    int insertSelective(User record);
+
+    User selectByPrimaryKey(String userId);
+
+    int updateByPrimaryKeySelective(User record);
+
+    int updateByPrimaryKey(User record);
+
+	/**
+	 * <p>
+	 * 根据登录名和密码判定是否登录成功
+	 * </p>
+	 * @author zm
+	 * @Date 2018年5月29日
+	 * @param user
+	 * @return
+	 */
+	User queryUserByLoginAmeAndPassword(User user);
+	List<User> queryAllUser();
+	List<User> queryLikeName(String str);
+}

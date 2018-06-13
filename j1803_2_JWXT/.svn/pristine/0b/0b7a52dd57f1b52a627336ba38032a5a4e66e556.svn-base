@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.system.ChooseMapper">
+	<resultMap id="BaseResultMap" type="com.model.system.Choose">
+		<id column="choose_id" property="chooseId" jdbcType="VARCHAR" />
+		<result column="schedule_id" property="scheduleId" jdbcType="VARCHAR" />
+		<result column="s_id" property="sId" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="BaseMap" type="com.model.system.Course">
+		<id column="choose_id" property="chooseId" jdbcType="VARCHAR" />
+		<result column="schedule_id" property="scheduleId" jdbcType="VARCHAR" />
+		<result column="subject_name" property="subjectName" jdbcType="VARCHAR" />
+		<result column="time_name" property="timeName" jdbcType="VARCHAR" />
+		<result column="time_id" property="timeId" jdbcType="VARCHAR" />
+		<result column="t_name" property="tName" jdbcType="VARCHAR" />
+		<result column="place_name" property="placeName" jdbcType="VARCHAR" />
+		<result column="total" property="total" jdbcType="VARCHAR" />
+		<result column="COUNT(choose.schedule_id)" property="count"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		choose_id, schedule_id, s_id
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from choose
+		where choose_id = #{chooseId,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from choose
+		where choose_id = #{chooseId,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.model.system.Choose">
+		insert into choose (choose_id,
+		schedule_id, s_id
+		)
+		values (#{chooseId,jdbcType=VARCHAR},
+		#{scheduleId,jdbcType=VARCHAR},
+		#{sId,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.model.system.Choose">
+		insert into choose
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="chooseId != null">
+				choose_id,
+			</if>
+			<if test="scheduleId != null">
+				schedule_id,
+			</if>
+			<if test="sId != null">
+				s_id,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="chooseId != null">
+				#{chooseId,jdbcType=VARCHAR},
+			</if>
+			<if test="scheduleId != null">
+				#{scheduleId,jdbcType=VARCHAR},
+			</if>
+			<if test="sId != null">
+				#{sId,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.model.system.Choose">
+		update choose
+		<set>
+			<if test="scheduleId != null">
+				schedule_id = #{scheduleId,jdbcType=VARCHAR},
+			</if>
+			<if test="sId != null">
+				s_id = #{sId,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where choose_id = #{chooseId,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.model.system.Choose">
+		update choose
+		set
+		schedule_id = #{scheduleId,jdbcType=VARCHAR},
+		s_id =
+		#{sId,jdbcType=VARCHAR}
+		where choose_id = #{chooseId,jdbcType=VARCHAR}
+	</update>
+
+
+	<select id="querySubjectBysId" resultMap="BaseMap"
+		parameterType="java.lang.String">
+		SELECT
+		`schedule`.schedule_id,
+		choose.choose_id,
+		`subject`.subject_name,
+		teacher.t_name,
+		time.time_name,
+		place.place_name,
+		`schedule`.total
+		FROM
+		choose
+		INNER JOIN
+		`schedule` ON
+		choose.schedule_id = `schedule`.schedule_id
+		INNER JOIN
+		`subject` ON
+		`schedule`.subject_id = `subject`.subject_id
+		INNER JOIN
+		teacher ON
+		`schedule`.t_id = teacher.t_id
+		INNER JOIN time ON
+		`schedule`.time_id =
+		time.time_id
+		INNER JOIN place ON
+		`schedule`.place_id = place.place_id
+		WHERE s_id =
+		#{sId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="queryScheduleAll" resultMap="BaseMap">
+		SELECT
+		`schedule`.total,
+		`schedule`.schedule_id,
+		`subject`.subject_name,
+		teacher.t_name,
+		time.time_name,
+		time.time_id,
+		place.place_name,
+		COUNT(choose.schedule_id)
+		FROM
+		`schedule`
+		INNER JOIN teacher ON
+		`schedule`.t_id = teacher.t_id
+		INNER
+		JOIN time ON `schedule`.time_id =
+		time.time_id
+		INNER JOIN place ON
+		`schedule`.place_id = place.place_id
+		INNER JOIN `subject` ON
+		`schedule`.subject_id = `subject`.subject_id
+		Left outer Join choose ON
+		`schedule`.schedule_id = choose.schedule_id
+		GROUP BY
+		`subject`.subject_name
+	</select>
+
+
+	<select id="queryChooseBysIdAndschedule" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from choose
+		where s_id = #{0} and schedule_id = #{1}
+	</select>
+
+	<select id="querytotalAll" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		SELECT COUNT(schedule_id) from choose GROUP BY
+		schedule_id HAVING
+		schedule_id=#{scheduleId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getLikeByPage" resultMap="BaseMap" parameterType="java.lang.String">
+		SELECT
+		`schedule`.total,
+		`schedule`.schedule_id,
+		`subject`.subject_name,
+		teacher.t_name,
+		time.time_name,
+		place.place_name,
+		COUNT(choose.schedule_id)
+		FROM
+		`schedule`
+		INNER JOIN teacher ON
+		`schedule`.t_id = teacher.t_id
+		INNER
+		JOIN time ON `schedule`.time_id =
+		time.time_id
+		INNER JOIN place ON
+		`schedule`.place_id = place.place_id
+		INNER JOIN `subject` ON
+		`schedule`.subject_id = `subject`.subject_id
+		Left outer Join choose ON
+		`schedule`.schedule_id = choose.schedule_id
+		GROUP BY
+		`subject`.subject_name
+		HAVING `subject`.subject_name like '%${
+		_parameter}%'
+	</select>
+
+	<select id="getLikeByPage2" resultMap="BaseMap" parameterType="java.lang.String">
+		SELECT
+		`schedule`.total,
+		`schedule`.schedule_id,
+		`subject`.subject_name,
+		teacher.t_name,
+		time.time_name,
+		place.place_name,
+		COUNT(choose.schedule_id)
+		FROM
+		choose
+		INNER JOIN
+		`schedule` ON
+		choose.schedule_id = `schedule`.schedule_id
+		INNER JOIN
+		`subject` ON
+		`schedule`.subject_id = `subject`.subject_id
+		INNER JOIN
+		teacher ON
+		`schedule`.t_id = teacher.t_id
+		INNER JOIN time ON
+		`schedule`.time_id =
+		time.time_id
+		INNER JOIN place ON
+		`schedule`.place_id = place.place_id
+		GROUP BY
+		`subject`.subject_name
+		HAVING time.time_name like '%${
+		_parameter}%'
+	</select>
+
+	<select id="getLikeByPage3" resultMap="BaseMap" parameterType="java.lang.String">
+		SELECT
+		`schedule`.total,
+		`schedule`.schedule_id,
+		`subject`.subject_name,
+		teacher.t_name,
+		time.time_name,
+		place.place_name,
+		COUNT(choose.schedule_id)
+		FROM
+		choose
+		INNER JOIN
+		`schedule` ON
+		choose.schedule_id = `schedule`.schedule_id
+		INNER JOIN
+		`subject` ON
+		`schedule`.subject_id = `subject`.subject_id
+		INNER JOIN
+		teacher ON
+		`schedule`.t_id = teacher.t_id
+		INNER JOIN time ON
+		`schedule`.time_id =
+		time.time_id
+		INNER JOIN place ON
+		`schedule`.place_id = place.place_id
+		GROUP BY
+		`subject`.subject_name
+		HAVING `subject`.subject_name like '%${
+		_parameter}%'
+	</select>
+
+	<select id="queryChooseByTimeId" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		SELECT
+		choose.schedule_id,
+		choose.choose_id,
+		choose.s_id
+		FROM
+		choose
+		INNER JOIN `schedule` ON `schedule`.schedule_id =
+		choose.schedule_id
+		INNER JOIN time ON time.time_id = `schedule`.time_id
+		where
+		`schedule`.time_id = #{timeId,jdbcType=VARCHAR}
+	</select>
+
+</mapper>

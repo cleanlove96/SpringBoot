@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.system.MenuMapper">
+	<resultMap id="BaseResultMap" type="com.model.system.Menu">
+		<id column="menu_id" property="menuId" jdbcType="VARCHAR" />
+		<result column="p_id" property="pId" jdbcType="VARCHAR" />
+		<result column="menu_name" property="menuName"
+			jdbcType="VARCHAR" />
+		<result column="menu_desc" property="menuDesc"
+			jdbcType="VARCHAR" />
+		<result column="menu_url" property="menuUrl" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime"
+			jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<resultMap id="MenuPnResultMap" type="com.model.system.MenuPN">
+		<id column="menu_id" property="menuId" jdbcType="VARCHAR" />
+		<result column="pName" property="pName" jdbcType="VARCHAR" />
+		<result column="menu_name" property="menuName"
+			jdbcType="VARCHAR" />
+		<result column="menu_desc" property="menuDesc"
+			jdbcType="VARCHAR" />
+		<result column="menu_url" property="menuUrl" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime"
+			jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		menu_id, p_id, menu_name, menu_desc, menu_url, create_time
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from menu
+		where menu_id = #{menuId,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from menu
+		where menu_id = #{menuId,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.model.system.Menu">
+		insert into menu (menu_id,
+		p_id, menu_name,
+		menu_desc, menu_url, create_time
+		)
+		values
+		(#{menuId,jdbcType=VARCHAR}, #{pId,jdbcType=VARCHAR},
+		#{menuName,jdbcType=VARCHAR},
+		#{menuDesc,jdbcType=VARCHAR},
+		#{menuUrl,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+		)
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.model.system.Menu">
+		insert into menu
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="menuId != null">
+				menu_id,
+			</if>
+			<if test="pId != null">
+				p_id,
+			</if>
+			<if test="menuName != null">
+				menu_name,
+			</if>
+			<if test="menuDesc != null">
+				menu_desc,
+			</if>
+			<if test="menuUrl != null">
+				menu_url,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="menuId != null">
+				#{menuId,jdbcType=VARCHAR},
+			</if>
+			<if test="pId != null">
+				#{pId,jdbcType=VARCHAR},
+			</if>
+			<if test="menuName != null">
+				#{menuName,jdbcType=VARCHAR},
+			</if>
+			<if test="menuDesc != null">
+				#{menuDesc,jdbcType=VARCHAR},
+			</if>
+			<if test="menuUrl != null">
+				#{menuUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.model.system.Menu">
+		update menu
+		<set>
+			<if test="pId != null">
+				p_id = #{pId,jdbcType=VARCHAR},
+			</if>
+			<if test="menuName != null">
+				menu_name = #{menuName,jdbcType=VARCHAR},
+			</if>
+			<if test="menuDesc != null">
+				menu_desc = #{menuDesc,jdbcType=VARCHAR},
+			</if>
+			<if test="menuUrl != null">
+				menu_url = #{menuUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where menu_id = #{menuId,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.model.system.Menu">
+		update menu
+		set p_id = #{pId,jdbcType=VARCHAR},
+		menu_name
+		= #{menuName,jdbcType=VARCHAR},
+		menu_desc =
+		#{menuDesc,jdbcType=VARCHAR},
+		menu_url = #{menuUrl,jdbcType=VARCHAR},
+		create_time = #{createTime,jdbcType=TIMESTAMP}
+		where menu_id =
+		#{menuId,jdbcType=VARCHAR}
+	</update>
+
+
+	<select id="findMenuAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from menu order by create_time asc
+	</select>
+	<select id="findMenuPNAll" resultMap="MenuPnResultMap">
+		SELECT
+			a.menu_id,
+			menu.menu_name as pName,
+			a.menu_name,
+			a.menu_desc,
+			a.menu_url,
+			a.create_time
+		FROM menu as a
+		INNER JOIN menu  ON a.p_id = menu.menu_id
+		order by create_time asc
+	</select>
+
+	<select id="findMenuLByMN" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from menu
+		where menu_name LIKE
+		CONCAT('%',#{menuName,jdbcType=VARCHAR},'%')
+	</select>
+
+	<select id="findMenuPNLByMN" resultMap="MenuPnResultMap"
+		parameterType="java.lang.String">
+		SELECT
+			a.menu_id,
+			menu.menu_name as pName,
+			a.menu_name,
+			a.menu_desc,
+			a.menu_url,
+			a.create_time
+		FROM menu as a
+		INNER JOIN menu  ON a.p_id = menu.menu_id
+		where a.menu_name LIKE
+		CONCAT('%',#{menuName,jdbcType=VARCHAR},'%')
+	</select>
+
+
+	<select id="findMenuLByMD" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from menu
+		where menu_desc LIKE
+		CONCAT('%',#{menuDesc,jdbcType=VARCHAR},'%')
+	</select>
+
+	<select id="findMenuPNLByMD" resultMap="MenuPnResultMap"
+		parameterType="java.lang.String">
+		SELECT
+			a.menu_id,
+			menu.menu_name as pName,
+			a.menu_name,
+			a.menu_desc,
+			a.menu_url,
+			a.create_time
+		FROM menu as a
+		INNER JOIN menu  ON a.p_id = menu.menu_id
+		where a.menu_desc LIKE
+		CONCAT('%',#{menuDesc,jdbcType=VARCHAR},'%')
+	</select>
+	
+	<select id="findMenuPNLByPN" resultMap="MenuPnResultMap"
+		parameterType="java.lang.String">
+		SELECT
+			a.menu_id,
+			menu.menu_name as pName,
+			a.menu_name,
+			a.menu_desc,
+			a.menu_url,
+			a.create_time
+		FROM menu as a
+		INNER JOIN menu  ON a.p_id = menu.menu_id
+		where menu.menu_name LIKE
+		CONCAT('%',#{pName,jdbcType=VARCHAR},'%')
+	</select>
+
+	<select id="findMenuByPid" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from menu
+		where p_id = #{pId,jdbcType=VARCHAR}
+	</select>
+	<select id="queryAllMenuXZByUserId" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		SELECT
+		menu.menu_id,
+		menu.p_id,
+		menu.menu_name,
+		menu.menu_desc,
+		menu.menu_url,
+		menu.create_time
+		FROM
+		`user`
+		INNER JOIN
+		role_menu ON `user`.role_id = role_menu.role_id
+		INNER JOIN menu ON
+		role_menu.menu_id = menu.menu_id
+		WHERE
+		user_id=#{userId,jdbcType=VARCHAR}
+		ORDER BY
+		create_time ASC
+	</select>
+	<select id="queryMenuByUserId" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		SELECT
+		menu.menu_id,
+		menu.p_id,
+		menu.menu_name,
+		menu.menu_desc,
+		menu.menu_url,
+		menu.create_time
+		FROM
+		menu
+		INNER JOIN
+		role_menu ON role_menu.menu_id = menu.menu_id
+		INNER JOIN `user` ON
+		role_menu.role_id = `user`.role_id
+		where user_id =
+		#{userId,jdbcType=VARCHAR} order by menu.create_time ASC
+	</select>
+	<select id="queryMenuSelectedSonByMenuId"
+		resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+		menu.menu_id,
+		menu.p_id,
+		menu.menu_name,
+		menu.menu_desc,
+		menu.menu_url,
+		menu.create_time
+		FROM
+		`user`
+		INNER JOIN role_menu ON `user`.role_id = role_menu.role_id
+		INNER JOIN menu ON role_menu.menu_id = menu.menu_id
+		where  user_id=#{0} AND p_id=#{1}
+	</select>
+</mapper>

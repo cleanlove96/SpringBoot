@@ -1,0 +1,17 @@
+package com.dao.system;
+
+import com.model.system.Time;
+
+public interface TimeMapper {
+    int deleteByPrimaryKey(String timeId);
+
+    int insert(Time record);
+
+    int insertSelective(Time record);
+
+    Time selectByPrimaryKey(String timeId);
+
+    int updateByPrimaryKeySelective(Time record);
+
+    int updateByPrimaryKey(Time record);
+}

@@ -1,0 +1,84 @@
+package com.dao.system;
+
+import java.util.List;
+
+import com.model.system.SubjectTeacherStudent;
+import com.model.system.Teacher;
+
+public interface TeacherMapper {
+	int deleteByPrimaryKey(String tId);
+
+	int insert(Teacher record);
+
+	int insertSelective(Teacher record);
+
+	Teacher selectByPrimaryKey(String tId);
+
+	int updateByPrimaryKeySelective(Teacher record);
+
+	int updateByPrimaryKey(Teacher record);
+
+	/**
+	 * <p>
+	 * 
+	 * </p>
+	 * 
+	 * @author zm
+	 * @Date 2018年5月29日
+	 * @return
+	 */
+	List<Teacher> selectAllTeacher();
+
+	/**
+	 * <p>
+	 * 
+	 * </p>
+	 * 
+	 * @author zm
+	 * @Date 2018年5月29日
+	 * @param userId
+	 * @return
+	 */
+	List<SubjectTeacherStudent> selectsubByTeacherId(String userId);
+
+	/**
+	 * <p>
+	 * 
+	 * </p>
+	 * 
+	 * @author zm
+	 * @Date 2018年5月30日
+	 * @param sId
+	 * @param userId
+	 * @param name 
+	 * @return
+	 */
+	SubjectTeacherStudent selectsubBySutId(String sId, String userId, String name);
+
+	List<Teacher> queryAllUser();
+
+	List<Teacher> queryLikeName(String str);
+
+	/**
+	 * <p>
+	 * 
+	 * </p>
+	 * @author zm
+	 * @Date 2018年6月4日
+	 * @param userId
+	 * @param sName
+	 * @return
+	 */
+	List<SubjectTeacherStudent> selectsubByTeacherIdAndName(String userId, String sName);
+
+	/**
+	 * <p>
+	 * 
+	 * </p>
+	 * @author zm
+	 * @Date 2018年6月4日
+	 * @param userId
+	 * @return
+	 */
+	List<SubjectTeacherStudent> selectsubByTeacherIdgroup(String userId);
+}

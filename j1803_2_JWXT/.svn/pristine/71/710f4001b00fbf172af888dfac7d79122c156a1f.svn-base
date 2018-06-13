@@ -1,0 +1,48 @@
+/*****************************************************
+ *  HISTORY
+ *  FileName:StudentServiceimp.java
+ *  Package:com.service.system.impl
+ *  Project:j1803_2_JWXT
+ *  Version:1.0
+ *  Date:2018年5月29日 zm创建文件
+ **********修改记录*************
+ * Date:          Author:
+ *
+ *******************************************************/
+package com.service.system.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.dao.system.StudentMapper;
+import com.dao.system.UserMapper;
+import com.model.system.Student;
+import com.service.system.StudentService;
+
+/**
+ * <p>
+ * 
+ * </p>	
+ * @Copyright (C),华清远见
+ * @author zm
+ * @Date:2018年5月29日
+ */
+@Service
+public class StudentServiceImpl implements StudentService {
+	@Autowired
+	private StudentMapper studentMapper;
+
+	@Override
+	public List<Student> selectAllStudent() {
+		
+		return studentMapper.selectAllStudent();
+	}
+
+	@Override
+	public Student selectStudentByName(String studentName) {
+		
+		return studentMapper.selectStudentByName(studentName);
+	}
+}

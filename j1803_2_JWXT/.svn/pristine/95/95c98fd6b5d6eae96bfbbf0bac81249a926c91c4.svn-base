@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.system.TeacherMapper">
+	<resultMap id="BaseResultMap" type="com.model.system.Teacher">
+		<id column="t_id" property="tId" jdbcType="VARCHAR" />
+		<result column="t_name" property="tName" jdbcType="VARCHAR" />
+		<result column="sex" property="sex" jdbcType="VARCHAR" />
+		<result column="age" property="age" jdbcType="INTEGER" />
+		<result column="native_place" property="nativePlace" jdbcType="VARCHAR" />
+		<result column="role_id" property="roleId" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<resultMap id="SubResultMap" type="com.model.system.SubjectTeacherStudent">
+		<id column="t_id" property="tId" jdbcType="VARCHAR" />
+		<result column="subject_name" property="subjectstudName"
+			jdbcType="VARCHAR" />
+		<result column="t_name" property="tName" jdbcType="VARCHAR" />
+		<result column="s_name" property="sName" jdbcType="VARCHAR" />
+		<result column="t_id" property="tId" jdbcType="VARCHAR" />
+		<result column="s_id" property="sId" jdbcType="VARCHAR" />
+		<result column="subject_id" property="subjectId" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		t_id, t_name, sex, age, native_place, role_id, create_time
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from teacher
+		where t_id = #{tId,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from
+		teacher
+		where t_id = #{tId,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.model.system.Teacher">
+		insert into teacher (t_id,
+		t_name, sex,
+		age, native_place, role_id,
+		create_time)
+		values
+		(#{tId,jdbcType=VARCHAR}, #{tName,jdbcType=VARCHAR},
+		#{sex,jdbcType=VARCHAR},
+		#{age,jdbcType=INTEGER},
+		#{nativePlace,jdbcType=VARCHAR}, #{roleId,jdbcType=VARCHAR},
+		#{createTime,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective" parameterType="com.model.system.Teacher">
+		insert into teacher
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="tId != null">
+				t_id,
+			</if>
+			<if test="tName != null">
+				t_name,
+			</if>
+			<if test="sex != null">
+				sex,
+			</if>
+			<if test="age != null">
+				age,
+			</if>
+			<if test="nativePlace != null">
+				native_place,
+			</if>
+			<if test="roleId != null">
+				role_id,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="tId != null">
+				#{tId,jdbcType=VARCHAR},
+			</if>
+			<if test="tName != null">
+				#{tName,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				#{sex,jdbcType=VARCHAR},
+			</if>
+			<if test="age != null">
+				#{age,jdbcType=INTEGER},
+			</if>
+			<if test="nativePlace != null">
+				#{nativePlace,jdbcType=VARCHAR},
+			</if>
+			<if test="roleId != null">
+				#{roleId,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.model.system.Teacher">
+		update teacher
+		<set>
+			<if test="tName != null">
+				t_name = #{tName,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				sex = #{sex,jdbcType=VARCHAR},
+			</if>
+			<if test="age != null">
+				age = #{age,jdbcType=INTEGER},
+			</if>
+			<if test="nativePlace != null">
+				native_place = #{nativePlace,jdbcType=VARCHAR},
+			</if>
+			<if test="roleId != null">
+				role_id = #{roleId,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where t_id = #{tId,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.model.system.Teacher">
+		update teacher
+		set
+		t_name = #{tName,jdbcType=VARCHAR},
+		sex = #{sex,jdbcType=VARCHAR},
+		age =
+		#{age,jdbcType=INTEGER},
+		native_place =
+		#{nativePlace,jdbcType=VARCHAR},
+		role_id =
+		#{roleId,jdbcType=VARCHAR},
+		create_time =
+		#{createTime,jdbcType=TIMESTAMP}
+		where t_id =
+		#{tId,jdbcType=VARCHAR}
+	</update>
+	<select id="selectsubByTeacherId" resultMap="SubResultMap"
+		parameterType="java.lang.String">
+		SELECT
+		`subject`.subject_name,
+		teacher.t_name,
+		student.s_name,
+		choose.s_id,
+		teacher.t_id,
+		`subject`.subject_id
+		FROM
+		`schedule`
+		INNER JOIN `subject` ON `schedule`.subject_id =
+		`subject`.subject_id
+		INNER JOIN teacher ON `schedule`.t_id =
+		teacher.t_id
+		INNER JOIN choose ON `schedule`.schedule_id =
+		choose.schedule_id
+		INNER JOIN student ON choose.s_id = student.s_id
+		WHERE
+		teacher.t_id=#{tId,jdbcType=VARCHAR}
+	</select>
+	<select id="selectsubBySutId" resultMap="SubResultMap"
+		parameterType="java.lang.String">
+		SELECT
+		`subject`.subject_name,
+		teacher.t_name,
+		student.s_name,
+		choose.s_id,
+		teacher.t_id,
+		`subject`.subject_id
+		FROM
+		`schedule`
+		INNER JOIN `subject` ON `schedule`.subject_id =
+		`subject`.subject_id
+		INNER JOIN teacher ON `schedule`.t_id =
+		teacher.t_id
+		INNER JOIN choose ON `schedule`.schedule_id =
+		choose.schedule_id
+		INNER JOIN student ON choose.s_id = student.s_id
+		WHERE student.s_id=#{0} and teacher.t_id=#{1}
+	</select>
+	<select id="queryAllUser" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from teacher
+	</select>
+	<select id="queryLikeName" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from teacher
+		where t_name like '%${value}%'
+	</select>
+
+</mapper>

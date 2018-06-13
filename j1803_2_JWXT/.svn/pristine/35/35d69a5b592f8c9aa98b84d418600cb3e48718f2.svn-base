@@ -1,0 +1,168 @@
+package com.controller.system;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.model.system.Choose;
+import com.model.system.Course;
+import com.model.system.User;
+import com.service.system.ChooseService;
+import framework.utils.PrimaryKeyUtil;
+import framework.utils.pageUtil.PagedResult;
+
+@Controller
+@RequestMapping("/chooseController")
+public class ChooseController {
+	@Autowired
+	private ChooseService chooseService;
+
+
+
+	/**查询排课 */
+	@RequestMapping(value = "listPage.do", produces = "application/json;charset=utf-8")
+	public ModelAndView listPage(@RequestParam(value = "pageNumber", defaultValue = "1") Integer pageNumber,
+			@RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize, HttpSession session, Model model) {
+		ModelAndView mv = new ModelAndView();
+		
+		PagedResult<Course> pageResult = chooseService.queryScheduleAll(pageNumber, pageSize);
+
+		mv.addObject("pageResult", pageResult);
+		mv.setViewName("choose/choose_list");
+		return mv;
+	}
+
+	/**查询选课结果 */
+	@RequestMapping(value = "listPage2.do", produces = "application/json;charset=utf-8")
+	public ModelAndView listPage2(@RequestParam(value = "pageNumber", defaultValue = "1") Integer pageNumber,
+			@RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize, HttpSession session, Model model) {
+		User user = (User) session.getAttribute("USER");
+		String sId = user.getUserId();
+		ModelAndView mv = new ModelAndView();
+        
+		PagedResult<Course> pageResult = chooseService.queryChooseBysId(pageNumber, pageSize, sId);
+
+		mv.addObject("pageResult", pageResult);
+		mv.setViewName("choose/choose_result");
+		return mv;
+	}
+	
+	/**取消选课 */
+	@RequestMapping(value = "listPage3.do", produces = "application/json;charset=utf-8")
+	public ModelAndView listPage3(@RequestParam(value = "pageNumber", defaultValue = "1") Integer pageNumber,
+			@RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize, HttpSession session, Model model) {
+		User user = (User) session.getAttribute("USER");
+		String sId = user.getUserId();
+		ModelAndView mv = new ModelAndView();
+
+		PagedResult<Course> pageResult = chooseService.queryChooseBysId(pageNumber, pageSize, sId);
+
+		mv.addObject("pageResult", pageResult);
+		mv.setViewName("choose/choose_adjust");
+		return mv;
+	}
+	
+	@RequestMapping("delete.do")
+	public String deleteChoose(HttpServletRequest request, HttpServletResponse response, HttpSession session,
+			Model model, String chooseId) {
+        System.err.println(chooseId);
+		int m = chooseService.deleteChoose(chooseId);
+		return "redirect:/chooseController/listPage2.do";
+	}
+
+	/**选课 */
+	@RequestMapping("add.do")
+	public String addChoose(HttpServletRequest request, HttpServletResponse response, HttpSession session, Model model,
+			Choose choose, String scheduleId) {
+		choose.setChooseId(PrimaryKeyUtil.getPrimaryKey());
+		User user = (User) session.getAttribute("USER");
+		String sId = user.getUserId();
+		if (chooseService.queryChooseBysIdAndschedule(sId, scheduleId) != null) {
+			return "redirect:/chooseController/listPage2.do";
+		} else {  
+			choose.setsId(sId);
+			choose.setScheduleId(scheduleId);
+			chooseService.add(choose);
+			return "redirect:/chooseController/listPage2.do";
+		}
+	}
+
+
+	/**课表 */
+	@RequestMapping(value = "listPage4.do", produces = "application/json;charset=utf-8")
+	public ModelAndView listPage4(@RequestParam(value = "pageNumber", defaultValue = "1") Integer pageNumber,
+			@RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize, HttpSession session, Model model) {
+		User user = (User) session.getAttribute("USER");
+		String sId = user.getUserId();
+		ModelAndView mv = new ModelAndView();
+        
+		PagedResult<Course> pageResult = chooseService.queryChooseBysId(pageNumber, pageSize, sId);
+
+		mv.addObject("pageResult", pageResult);
+		mv.setViewName("choose/choose_course");
+		return mv;
+	}
+	
+    /**按科目模糊查询 */	
+	@RequestMapping(value = "search.do", produces = "application/json;charset=utf-8")
+	public ModelAndView search(@RequestParam(value = "pageNumber", defaultValue = "1") Integer pageNumber,
+			@RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,HttpSession session,HttpServletRequest request,String keywords,String id) {
+		ModelAndView mv = new ModelAndView();
+		if(keywords!=null) {
+
+			String like =request.getParameter("keywords");
+			session.setAttribute("keywords", like);
+		}
+		String str1 = (String)session.getAttribute("keywords");
+		System.err.println(str1);
+		// 当前页和每页的条数
+		// 传入数据到分页工具类
+		PagedResult<Course> pageResult = chooseService.getLikeByPage(pageNumber, pageSize,str1);
+		// 数据传递到前台页面展示层
+		mv.addObject("pageResult", pageResult);
+		if("1".equals(id)){
+			mv.setViewName("choose/choose_list");
+		}else 
+			if("2".equals(id)){
+				mv.setViewName("choose/choose_result");
+			}else 
+				if("3".equals(id)){
+					mv.setViewName("choose/choose_adjust");
+				}
+		
+	    return mv;
+
+	}
+	
+    /**按上课时间模糊查询 */	
+	@RequestMapping(value = "search2.do", produces = "application/json;charset=utf-8")
+	public ModelAndView search2(@RequestParam(value = "pageNumber", defaultValue = "1") Integer pageNumber,
+			@RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,HttpSession session,HttpServletRequest request,String id) {
+		ModelAndView mv = new ModelAndView();
+		if(id!=null) {
+
+			String like =request.getParameter("id");
+			session.setAttribute("id", like);
+		}
+		String str1 = (String)session.getAttribute("id");
+		System.err.println(str1);
+		// 当前页和每页的条数
+		// 传入数据到分页工具类
+		PagedResult<Course> pageResult = chooseService.getLikeByPage2(pageNumber, pageSize,str1);
+		// 数据传递到前台页面展示层
+		mv.addObject("pageResult", pageResult);
+		
+	    mv.setViewName("choose/choose_course");
+	    
+		return mv;
+
+	}
+
+}

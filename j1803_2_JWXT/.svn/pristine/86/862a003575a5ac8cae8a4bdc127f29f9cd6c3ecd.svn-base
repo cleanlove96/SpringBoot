@@ -1,0 +1,191 @@
+package com.controller.system;
+
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.model.system.Subject;
+import com.service.system.SubjectService;
+
+import framework.controller.BaseController;
+import framework.utils.PrimaryKeyUtil;
+import framework.utils.pageUtil.PagedResult;
+
+/**
+ * <p>
+ * ��Ŀ
+ * </p>
+ * 
+ * @Copyright (C),����Զ��
+ * @author LGH
+ * @Date:2018��5��16��
+ */
+@Controller
+@RequestMapping("/subjectController")
+public class SubjectController extends BaseController {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3342681578065588671L;
+	
+	@Autowired
+	private SubjectService subjectService;
+	/**
+	 * <p>
+	 * �б�
+	 * </p>
+	 * 
+	 * @author LGH
+	 * @Date 2018��5��16��
+	 * @param request
+	 * @param response
+	 * @param session
+	 * @param model
+	 * @param subject
+	 * @return
+	 */
+	@RequestMapping(value = "listPage.do", produces = "application/json;charset=utf-8")
+	public ModelAndView listPage(@RequestParam(value = "pageNumber", defaultValue = "1") Integer pageNumber,
+			@RequestParam(value = "pageSize", defaultValue = "3") Integer pageSize) {
+		System.out.println("------------------��ͳ---------------------");
+		ModelAndView mv = new ModelAndView();
+		// ��ǰҳ��ÿҳ������
+		// �������ݵ���ҳ������
+		PagedResult<Subject> pageResult = subjectService.getAllByPage(pageNumber, pageSize);
+		// ���ݴ��ݵ�ǰ̨ҳ��չʾ��
+		mv.addObject("pageResult", pageResult);
+		mv.setViewName("subject/subject_list");
+		return mv;
+	}
+	
+	/**
+	 * <p>
+	 * ����
+	 * </p>
+	 * 
+	 * @author LGH
+	 * @Date 2018��5��16��
+	 * @param request
+	 * @param response
+	 * @param session
+	 * @param model
+	 * @param subject
+	 * @return
+	 */
+	@RequestMapping("add.do")
+	public String add(HttpServletRequest request, HttpServletResponse response, HttpSession session, Model model,
+			Subject subject){
+		subject.setSubjectId(PrimaryKeyUtil.getPrimaryKey());
+		subject.setCreateTime(new Date());
+		int n=subjectService.addSubject(subject);
+		return "redirect:/subjectController/listPage.do";
+	}
+	
+
+	/**
+	 * <p>
+	 * ɾ��
+	 * </p>
+	 * 
+	 * @author LGH
+	 * @Date 2018��5��16��
+	 * @param request
+	 * @param response
+	 * @param session
+	 * @param model
+	 * @param subject
+	 * @param String
+	 * @return
+	 */
+	@RequestMapping("delete.do")
+	public String delete(HttpServletRequest request, HttpServletResponse response, HttpSession session, Model model,
+			Subject subject,String subjectId){
+		int m=subjectService.deleteSubjectById(subjectId);
+		return "redirect:/subjectController/listPage.do";
+	}
+
+	/**
+	 * <p>
+	 * �޸�
+	 * </p>
+	 * 
+	 * @author LGH
+	 * @Date 2018��5��16��
+	 * @param request
+	 * @param response
+	 * @param session
+	 * @param model
+	 * @param subject
+	 * @param String
+	 * @return
+	 */
+	@RequestMapping("/updateUI.do")
+	public String updateUI(HttpServletRequest request, HttpServletResponse response, HttpSession session, Model model,
+			Subject subject,String subjectId){
+		Subject su=subjectService.querysubjectId(subjectId);
+		model.addAttribute("subject", su);
+		return "subject/subject_update";
+	}
+	@RequestMapping("/update.do")
+	public String update(HttpServletRequest request, HttpServletResponse response, HttpSession session, Model model,
+			Subject subject,String subjectId){
+		int mm=subjectService.updateSubject(subject);
+		return "redirect:/subjectController/listPage.do";
+	}
+	
+	/**
+	 * <p>
+	 * ����ɾ��
+	 * </p>
+	 * 
+	 * @author LGH
+	 * @Date 2018��5��16��
+	 * @param request
+	 * @param response
+	 * @param session
+	 * @param model
+	 * @param subject
+	 * @param String
+	 * @return
+	 */
+	@RequestMapping(value = "/deleteMany.do")
+	public String deleteMany(HttpServletRequest request, HttpServletResponse response, HttpSession session, Model model,
+			Subject subject,String[] ids){
+		if(ids==null){return "redirect:/subjectController/listPage.do";}
+		for (String id : ids) {
+			int m =subjectService.deleteSubjectById(id);
+		}
+		return "redirect:/subjectController/listPage.do";
+	}
+	@RequestMapping(value = "search.do", produces = "application/json;charset=utf-8")
+	public ModelAndView search(@RequestParam(value = "pageNumber", defaultValue = "1") Integer pageNumber,
+			@RequestParam(value = "pageSize", defaultValue = "3") Integer pageSize,HttpSession session,HttpServletRequest request,String str) {
+		ModelAndView mv = new ModelAndView();
+		if(str!=null) {
+			String like =request.getParameter("str");
+			session.setAttribute("str", like);
+		}
+		String str1 = (String)session.getAttribute("str");
+		// 当前页和每页的条数
+		// 传入数据到分页工具类
+		System.out.println("str1"+str1);
+		PagedResult<Subject> pageResult = subjectService.queryLikeName(pageNumber, pageSize,str1);
+		// 数据传递到前台页面展示层
+		System.out.println(pageResult+"pageResult");
+		mv.addObject("pageResult", pageResult);
+		mv.setViewName("subject/subject_list");
+		return mv;
+
+	}
+
+}

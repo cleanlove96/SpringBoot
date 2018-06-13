@@ -1,0 +1,101 @@
+/**
+ * 
+ */
+package com.service.system;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.model.system.Menu;
+import com.model.system.MenuPN;
+
+import framework.utils.pageUtil.PagedResult;
+
+/**
+ * @Author QinPeng
+ *
+ * @Date 2018年5月29日
+ */
+
+public interface MenuService {
+
+	/**
+	 * 添加菜单
+	 * @param menu
+	 */
+	void insertMenu(Menu menu);
+
+	/**
+	 * 通过menuId删除菜单
+	 * @param menuId
+	 */
+	void delMenu(String menuId);
+
+	/**
+	 * 获取菜单分页列表
+	 * @param pageNumber
+	 * @param pageSize
+	 * @param searchStyle
+	 * @param keywords
+	 * @return
+	 */
+	PagedResult<MenuPN> getMenusByPage(Integer pageNumber, Integer pageSize, String searchStyle, String keywords);
+	/**
+	 * 通过menuId修改菜单
+	 * @param menu
+	 */
+	void menuUpdate(Menu menu);
+
+	/**
+	 * @param menuId
+	 * @return
+	 */
+	Menu findMenuByID(String menuId);
+
+	/**
+	 * @param pId
+	 * @return
+	 */
+	List<Menu> findMenuByPid(String pId);
+
+	/**
+	 * @return
+	 */
+	List<Menu> findMenuAll();
+
+	/**
+	 * <p>
+	 * 
+	 * </p>
+	 * @author zm
+	 * @Date 2018年5月30日
+	 * @param userId
+	 * @return
+	 */
+	List<Menu> queryAllMenuXZByUserId(String userId);
+
+	/**
+	 * <p>
+	 * 
+	 * </p>
+	 * @author zm
+	 * @Date 2018年5月30日
+	 * @param userId
+	 * @return
+	 */
+	List<Menu> queryMenuByUserId(String userId);
+
+	/**
+	 * <p>
+	 * 
+	 * </p>
+	 * @author zm
+	 * @Date 2018年5月30日
+	 * @param menuId
+	 * @param uId 
+	 * @return
+	 */
+	List<Menu> queryMenuSelectedSonByMenuId(String menuId, String uId);
+
+}

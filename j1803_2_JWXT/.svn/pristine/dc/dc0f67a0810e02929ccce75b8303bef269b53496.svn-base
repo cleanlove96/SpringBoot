@@ -1,0 +1,155 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="<%=basePath%>css/pintuer.css">
+<link rel="stylesheet" href="<%=basePath%>css/admin.css">
+<script src="<%=basePath%>js/jquery.js"></script>
+<script src="<%=basePath%>js/pintuer.js"></script>  
+</head>
+<body>
+<div class="panel admin-panel">
+	<div class="panel-head">
+		<strong><span class="icon-pencil-square-o"></span>排课</strong>
+	</div>
+	<div class="body-content" align="center">
+		<form action="<%=basePath%>scheduleController/schedule.do" method="post">
+			<!-- 排课科目 -->
+			<div class="form-group">
+				<div class="label" style="width:50px;display:inline-block;vertical-align: middle;">
+		            <label>科目：</label>
+		        </div>
+		        <div class="field" style="width:200px;display:inline-block;">		        			
+					<select name="subjectId" class="input w200" id="subjectId">
+						<option>请选择科目</option>
+						<c:forEach items="${listSubject }" var="subject">
+							<option value="${subject.subjectId }">${subject.subjectName }
+						</c:forEach>
+					</select>
+				</div>
+			</div>
+			
+			<!-- 授课教师 -->
+			<div class="form-group">
+				<div class="label" style="width:50px;display:inline-block;vertical-align: middle;">
+		            <label>教师：</label>
+		        </div>
+		        <div class="field" style="width:200px;display:inline-block;">	
+					<select name="teacherId" class="input w200" id="teacherId">
+						<option>请选择教师</option>
+						<c:forEach items="${listTeacher }" var="teacher">
+							<option value="${teacher.tId }">${teacher.tName }
+						</c:forEach>
+					</select>
+				</div>
+			</div>
+			
+			<!-- 授课时间 -->
+			<div class="form-group">
+				<div class="label" style="width:50px;display:inline-block;vertical-align: middle;">
+		            <label>时间：</label>
+		        </div>
+		        <div class="field" style="width:200px;display:inline-block;">	
+					<select name="timeId" class="input w200" id="timeId">
+						<option>请选择时间</option>	
+						<c:forEach items="${listTime }" var="time">
+							<option value="${time.timeId }">${time.timeName }
+						</c:forEach>
+					</select>
+				</div>
+			</div>
+			
+			<!-- 授课地点 -->
+			<div class="form-group">
+				<div class="label" style="width:50px;display:inline-block;vertical-align: middle;">
+		            <label>地点：</label>
+		        </div>
+		        <div class="field" style="width:200px;display:inline-block;">	
+					<select name="placeId" class="input w200" id="placeId">
+						<option>请选择地点</option>
+						<c:forEach items="${listPlace }" var="place">
+							<option value="${place.placeId }">${place.placeName }
+						</c:forEach>
+					</select>
+				</div>
+			</div>
+				
+			<div class="form-group">
+				<div class="label" style="width:50px;display:inline-block;vertical-align: middle;">
+		            <label>人数：</label>
+		        </div>
+		        <div class="field" style="width:200px;display:inline-block;">	
+					<input type="text" name="number" class="input w200" id="number" placeholder="请输入课程容纳人数" style="color:#3300ff;">
+				</div>
+			</div>	
+			
+			<div class="form-group">
+				<div class="label">
+					<label></label>
+				</div>
+				<div class="field">
+					<button class="button bg-main icon-check-square-o" type="submit" onclick="return verify()">提交</button>
+				</div>
+			</div>			
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+$(function () {
+	var unSelected = "#999";
+	var selected = "#3300ff";
+	var defaultOption = "#333";
+	
+    $("select").css("color", unSelected);
+    $("option").css("color", defaultOption);
+    $("select").change(function () {
+        var selItem = $(this).val();
+        if (selItem == $(this).find('option:first').val()) {
+            $(this).css("color", unSelected);
+        } else {
+            $(this).css("color", selected);
+        }
+    });
+});
+
+function verify(){
+	var subjectId = $("#subjectId").val();
+	var teacherId = $("#teacherId").val();
+	var timeId = $("#timeId").val();
+	var placeId = $("#placeId").val();
+	var number = $("#number").val();
+	var isF = "";
+	if(subjectId=="请选择科目" || teacherId=="请选择教师" || timeId=="请选择时间" || placeId=="请选择地点" || number==""){
+		alert("请将信息填写完整！");
+		isF = false;
+	}else{		
+		$.ajax({  
+		    type: "post",  
+		    url: "<%=basePath%>scheduleController/verify.do",  
+		    data: {"subjectId":subjectId, "teacherId":teacherId, "timeId":timeId,"placeId":placeId,"number":number},   
+		    success: function(data){	    			
+		                if(data==0){
+		                	alert("教师或教室资源已被占用");
+		                	isF = false;
+		                }else{
+		                	isF = true;
+		                }	                
+		             }, 
+		    async: false
+		});  
+	}	
+	return isF;
+}
+
+</script>
+</body>
+</html>

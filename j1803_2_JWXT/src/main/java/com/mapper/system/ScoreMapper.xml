@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.system.ScoreMapper">
+	<resultMap id="BaseResultMap" type="com.model.system.Score">
+		<id column="score_id" property="scoreId" jdbcType="VARCHAR" />
+		<result column="t_id" property="tId" jdbcType="VARCHAR" />
+		<result column="subject_id" property="subjectId"
+			jdbcType="VARCHAR" />
+		<result column="s_id" property="sId" jdbcType="VARCHAR" />
+		<result column="score" property="score" jdbcType="DOUBLE" />
+	</resultMap>
+	<resultMap id="NewBaseResultMap"
+		type="com.model.system.NewScore">
+		<id column="score_id" property="scoreId" jdbcType="VARCHAR" />
+		<result column="t_name" property="tName" jdbcType="VARCHAR" />
+		<result column="subject_name" property="subjectName"
+			jdbcType="VARCHAR" />
+		<result column="s_name" property="sName" jdbcType="VARCHAR" />
+		<result column="score" property="score" jdbcType="DOUBLE" />
+		<result column="major_name" property="majorName"
+			jdbcType="VARCHAR" />
+		<result column="class_name" property="className"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		score_id, t_id, subject_id, s_id, score
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from score
+		where score_id = #{scoreId,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+		delete from score
+		where score_id = #{scoreId,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert" parameterType="com.model.system.Score">
+		insert into score (score_id,
+		t_id, subject_id,s_id,score)
+		values (#{scoreId,jdbcType=VARCHAR},
+		#{tId,jdbcType=VARCHAR},
+		#{subjectId,jdbcType=VARCHAR},
+		#{sId,jdbcType=VARCHAR},#{score,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.model.system.Score">
+		insert into score
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="scoreId != null">
+				score_id,
+			</if>
+			<if test="tId != null">
+				t_id,
+			</if>
+			<if test="subjectId != null">
+				subject_id,
+			</if>
+			<if test="sId != null">
+				s_id,
+			</if>
+			<if test="score != null">
+				score,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="scoreId != null">
+				#{scoreId,jdbcType=VARCHAR},
+			</if>
+			<if test="tId != null">
+				#{tId,jdbcType=VARCHAR},
+			</if>
+			<if test="subjectId != null">
+				#{subjectId,jdbcType=VARCHAR},
+			</if>
+			<if test="sId != null">
+				#{sId,jdbcType=VARCHAR},
+			</if>
+			<if test="score != null">
+				#{score,jdbcType=DOUBLE},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.model.system.Score">
+		update score
+		<set>
+			<if test="tId != null">
+				t_id = #{tId,jdbcType=VARCHAR},
+			</if>
+			<if test="subjectId != null">
+				subject_id = #{subjectId,jdbcType=VARCHAR},
+			</if>
+			<if test="sId != null">
+				s_id = #{sId,jdbcType=VARCHAR},
+			</if>
+			<if test="score != null">
+				score = #{score,jdbcType=DOUBLE},
+			</if>
+		</set>
+		where score_id = #{scoreId,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.model.system.Score">
+		update score
+		set t_id = #{tId,jdbcType=VARCHAR},
+		subject_id = #{subjectId,jdbcType=VARCHAR},
+		s_id =
+		#{sId,jdbcType=VARCHAR},
+		score = #{score,jdbcType=DOUBLE}
+		where score_id
+		= #{scoreId,jdbcType=VARCHAR}
+	</update>
+	<select id="queryAllScore" resultMap="NewBaseResultMap">
+		SELECT
+		student.s_name,
+		teacher.t_name,
+		`subject`.subject_name,
+		score.score_id,
+		score.score
+		FROM
+		score
+		INNER JOIN student ON score.s_id = student.s_id
+		INNER JOIN teacher
+		ON score.t_id = teacher.t_id
+		INNER JOIN `subject` ON score.subject_id =
+		`subject`.subject_id
+	</select>
+	<select id="selectAllStudScore" resultMap="NewBaseResultMap">
+		SELECT
+		student.s_name,
+		`subject`.subject_name,
+		teacher.t_name,
+		score.score,
+		major.major_name,
+		classes.class_name
+		FROM
+		score
+		INNER JOIN student ON score.s_id =
+		student.s_id
+		INNER JOIN `subject` ON score.subject_id =
+		`subject`.subject_id
+		INNER JOIN teacher ON score.t_id = teacher.t_id
+		INNER JOIN major ON student.major_id = major.major_id
+		INNER JOIN
+		classes ON student.class_id = classes.class_id
+		where
+		teacher.t_id=#{tId,jdbcType=VARCHAR}
+	</select>
+	<select id="selectStudScoreById" resultMap="NewBaseResultMap"
+		parameterType="java.lang.String">
+		SELECT
+		student.s_name,
+		`subject`.subject_name,
+		teacher.t_name,
+		score.score,
+		score.score_id,
+		major.major_name,
+		classes.class_name
+		FROM
+		score
+		INNER JOIN student ON score.s_id =
+		student.s_id
+		INNER JOIN teacher ON score.t_id = teacher.t_id
+		INNER JOIN
+		`subject` ON score.subject_id = `subject`.subject_id
+		INNER JOIN major
+		ON student.major_id = major.major_id
+		INNER JOIN classes ON
+		student.class_id = classes.class_id
+		where student.s_id
+		=
+		#{sId,jdbcType=VARCHAR}
+	</select>
+	<select id="selectStudScoreByIdgroup" resultMap="NewBaseResultMap"
+		parameterType="java.lang.String">
+		SELECT
+		student.s_name,
+		`subject`.subject_name,
+		teacher.t_name,
+		score.score,
+		score.score_id,
+		major.major_name,
+		classes.class_name
+		FROM
+		score
+		INNER JOIN student ON score.s_id =
+		student.s_id
+		INNER JOIN teacher ON score.t_id = teacher.t_id
+		INNER JOIN
+		`subject` ON score.subject_id = `subject`.subject_id
+		INNER JOIN major
+		ON student.major_id = major.major_id
+		INNER JOIN classes ON
+		student.class_id = classes.class_id		
+		where student.s_id
+		=#{sId,jdbcType=VARCHAR}
+		order  BY score DESC
+	</select>
+	<select id="querySelectById" resultMap="NewBaseResultMap"
+		parameterType="java.lang.String">
+		SELECT
+		score.score_id,
+		score.score,
+		teacher.t_name,
+		`subject`.subject_name,
+		student.s_name
+		FROM
+		score
+		INNER JOIN `subject` ON
+		score.subject_id = `subject`.subject_id
+		INNER JOIN student ON
+		score.s_id = student.s_id
+		INNER JOIN teacher ON score.t_id =
+		teacher.t_id
+		WHERE teacher.t_id=#{0} AND student.s_id=#{1} AND
+		`subject`.subject_id=#{2}
+	</select>
+	<update id="updatescore" parameterType="java.lang.String">
+		UPDATE score SET
+		score=#{1} WHERE score_id=#{0}
+	</update>
+	<select id="selectAllbyUserId" resultMap="NewBaseResultMap"
+		parameterType="java.lang.String">
+		SELECT
+		score.score_id,
+		teacher.t_name,
+		`subject`.subject_name,
+		student.s_name,
+		score.score,
+		major.major_name,
+		classes.class_name
+		FROM
+		score
+		INNER JOIN student ON score.s_id =
+		student.s_id
+		INNER JOIN `subject` ON score.subject_id =
+		`subject`.subject_id
+		INNER JOIN teacher ON score.t_id = teacher.t_id
+		INNER JOIN major ON student.major_id = major.major_id
+		INNER JOIN
+		classes ON student.class_id = classes.class_id
+		WHERE
+		teacher.t_id=#{tId,jdbcType=VARCHAR}
+	</select>
+	<select id="queryselectByScoreId" resultMap="NewBaseResultMap"
+		parameterType="java.lang.String">
+		SELECT
+		score.score_id,
+		teacher.t_name,
+		`subject`.subject_name,
+		student.s_name,
+		score.score,
+		major.major_name,
+		classes.class_name
+		FROM
+		score
+		INNER JOIN student ON score.s_id =
+		student.s_id
+		INNER JOIN `subject` ON score.subject_id =
+		`subject`.subject_id
+		INNER JOIN teacher ON score.t_id = teacher.t_id
+		INNER JOIN major ON student.major_id = major.major_id
+		INNER JOIN
+		classes ON student.class_id = classes.class_id
+		WHERE
+		score.score_id=#{scoreId,jdbcType=VARCHAR}
+	</select>
+	<select id="selectBySidTidSubjectid" resultType="int"
+		parameterType="java.lang.String">
+		SELECT COUNT(score_id) from score where t_id=#{1} AND
+		s_id=#{0} AND subject_id=#{2}
+	</select>
+	<select id="selectStudentByName" resultMap="NewBaseResultMap"
+		parameterType="java.lang.String">
+		SELECT
+		student.s_name,
+		`subject`.subject_name,
+		teacher.t_name,
+		score.score,
+		major.major_name,
+		classes.class_name
+		FROM
+		score
+		INNER JOIN student ON score.s_id = student.s_id
+		INNER JOIN
+		`subject` ON score.subject_id = `subject`.subject_id
+		INNER JOIN teacher
+		ON score.t_id = teacher.t_id
+		INNER JOIN major ON student.major_id =
+		major.major_id
+		INNER JOIN classes ON student.class_id =
+		classes.class_id
+		where
+		teacher.t_id=#{0} AND student.s_name=#{1}
+	</select>
+	<select id="studentselectBysbujectName"
+		resultMap="NewBaseResultMap" parameterType="java.lang.String">
+		SELECT
+		student.s_name,
+		`subject`.subject_name,
+		teacher.t_name,
+		score.score,
+		major.major_name,
+		classes.class_name
+		FROM
+		score
+		INNER JOIN student ON score.s_id =
+		student.s_id
+		INNER JOIN
+		`subject` ON score.subject_id =
+		`subject`.subject_id
+		INNER JOIN teacher
+		ON score.t_id = teacher.t_id
+		INNER JOIN major ON student.major_id =
+		major.major_id
+		INNER JOIN classes
+		ON student.class_id =
+		classes.class_id
+		where
+		student.s_id=#{0} AND
+		`subject`.subject_name=#{1}
+	</select>
+	<select id="adminselectAllScore" resultMap="NewBaseResultMap"
+		parameterType="java.lang.String">
+		SELECT
+		`subject`.subject_name,
+		teacher.t_name,
+		student.s_name,
+		choose.s_id,
+		teacher.t_id,
+		`subject`.subject_id,
+		major.major_name,
+		classes.class_name,
+		score.score
+		FROM
+		`schedule`
+		INNER
+		JOIN `subject` ON `schedule`.subject_id = `subject`.subject_id
+		INNER
+		JOIN teacher ON `schedule`.t_id = teacher.t_id
+		INNER JOIN choose ON
+		`schedule`.schedule_id = choose.schedule_id
+		INNER JOIN student ON
+		choose.s_id = student.s_id
+		INNER JOIN major ON student.major_id =
+		major.major_id
+		INNER JOIN classes ON student.class_id =
+		classes.class_id
+		INNER JOIN score ON teacher.t_id = score.t_id AND
+		student.s_id = score.s_id
+		AND `subject`.subject_id = score.subject_id
+		order  BY score  DESC
+	</select>
+	<select id="adminselectAllScoreGroup" resultMap="NewBaseResultMap"
+		parameterType="java.lang.String">
+		SELECT
+		`subject`.subject_name,
+		teacher.t_name,
+		student.s_name,
+		choose.s_id,
+		teacher.t_id,
+		`subject`.subject_id,
+		major.major_name,
+		classes.class_name,
+		score.score
+		FROM
+		`schedule`
+		INNER
+		JOIN `subject` ON `schedule`.subject_id = `subject`.subject_id
+		INNER
+		JOIN teacher ON `schedule`.t_id = teacher.t_id
+		INNER JOIN choose ON
+		`schedule`.schedule_id = choose.schedule_id
+		INNER JOIN student ON
+		choose.s_id = student.s_id
+		INNER JOIN major ON student.major_id =
+		major.major_id
+		INNER JOIN classes ON student.class_id =
+		classes.class_id
+		INNER JOIN score ON teacher.t_id = score.t_id AND
+		student.s_id = score.s_id
+		AND `subject`.subject_id = score.subject_id
+		order BY score DESC
+	</select>
+	<select id="adminselectStudentScore"
+		resultMap="NewBaseResultMap" parameterType="java.lang.String">
+		SELECT
+		`subject`.subject_name,
+		teacher.t_name,
+		student.s_name,
+		choose.s_id,
+		teacher.t_id,
+		`subject`.subject_id,
+		major.major_name,
+		classes.class_name,
+		score.score
+		FROM
+		`schedule`
+		INNER JOIN `subject` ON
+		`schedule`.subject_id = `subject`.subject_id
+		INNER JOIN teacher ON
+		`schedule`.t_id = teacher.t_id
+		INNER JOIN choose ON
+		`schedule`.schedule_id = choose.schedule_id
+		INNER JOIN student ON
+		choose.s_id = student.s_id
+		INNER JOIN major ON student.major_id =
+		major.major_id
+		INNER JOIN classes ON student.class_id =
+		classes.class_id
+		INNER JOIN score ON teacher.t_id = score.t_id AND
+		student.s_id = score.s_id
+		AND `subject`.subject_id = score.subject_id
+		where student.s_name=#{namestr,jdbcType=VARCHAR}
+	</select>
+	<select id="adminselectSubjectScore"
+		resultMap="NewBaseResultMap" parameterType="java.lang.String">
+		SELECT
+		`subject`.subject_name,
+		teacher.t_name,
+		student.s_name,
+		choose.s_id,
+		teacher.t_id,
+		`subject`.subject_id,
+		major.major_name,
+		classes.class_name,
+		score.score
+		FROM
+		`schedule`
+		INNER JOIN `subject` ON
+		`schedule`.subject_id = `subject`.subject_id
+		INNER JOIN teacher ON
+		`schedule`.t_id = teacher.t_id
+		INNER JOIN choose ON
+		`schedule`.schedule_id = choose.schedule_id
+		INNER JOIN student ON
+		choose.s_id = student.s_id
+		INNER JOIN major ON student.major_id =
+		major.major_id
+		INNER JOIN classes ON student.class_id =
+		classes.class_id
+		INNER JOIN score ON teacher.t_id = score.t_id AND
+		student.s_id = score.s_id
+		AND `subject`.subject_id = score.subject_id
+		where
+		`subject`.subject_name=#{subjectstr,jdbcType=VARCHAR}
+	</select>
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.system.ChooseMapper" >
+  <resultMap id="BaseResultMap" type="com.model.system.Choose" >
+    <id column="choose_id" property="chooseId" jdbcType="VARCHAR" />
+    <result column="schedule_id" property="scheduleId" jdbcType="VARCHAR" />
+    <result column="s_id" property="sId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    choose_id, schedule_id, s_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from choose
+    where choose_id = #{chooseId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from choose
+    where choose_id = #{chooseId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.model.system.Choose" >
+    insert into choose (choose_id, schedule_id, s_id
+      )
+    values (#{chooseId,jdbcType=VARCHAR}, #{scheduleId,jdbcType=VARCHAR}, #{sId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.model.system.Choose" >
+    insert into choose
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="chooseId != null" >
+        choose_id,
+      </if>
+      <if test="scheduleId != null" >
+        schedule_id,
+      </if>
+      <if test="sId != null" >
+        s_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="chooseId != null" >
+        #{chooseId,jdbcType=VARCHAR},
+      </if>
+      <if test="scheduleId != null" >
+        #{scheduleId,jdbcType=VARCHAR},
+      </if>
+      <if test="sId != null" >
+        #{sId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.model.system.Choose" >
+    update choose
+    <set >
+      <if test="scheduleId != null" >
+        schedule_id = #{scheduleId,jdbcType=VARCHAR},
+      </if>
+      <if test="sId != null" >
+        s_id = #{sId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where choose_id = #{chooseId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.model.system.Choose" >
+    update choose
+    set schedule_id = #{scheduleId,jdbcType=VARCHAR},
+      s_id = #{sId,jdbcType=VARCHAR}
+    where choose_id = #{chooseId,jdbcType=VARCHAR}
+  </update>
+</mapper>

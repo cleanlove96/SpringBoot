@@ -1,0 +1,28 @@
+/**
+ * 
+ */
+package com.controller.system;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.model.system.User;
+
+/**
+ * @Author QinPeng
+ *
+ * @Date 2018年6月6日
+ */
+@Controller
+@RequestMapping("/indexController")
+public class IndexController {
+	@RequestMapping("/person.do")
+	public String person(HttpSession session) {
+		User user=(User) session.getAttribute("user");
+		
+		return null;
+		
+	}
+}

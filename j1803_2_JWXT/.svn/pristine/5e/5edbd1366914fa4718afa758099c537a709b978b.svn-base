@@ -1,0 +1,100 @@
+package com.dao.system;
+
+import java.util.List;
+
+import com.model.system.Menu;
+import com.model.system.MenuPN;
+
+public interface MenuMapper {
+    int deleteByPrimaryKey(String menuId);
+
+    int insert(Menu record);
+
+    int insertSelective(Menu record);
+
+    Menu selectByPrimaryKey(String menuId);
+
+    int updateByPrimaryKeySelective(Menu record);
+
+    int updateByPrimaryKey(Menu record);
+
+	/**
+	 * @return
+	 */
+	List<Menu> findMenuAll();
+
+	/**
+	 * @param keywords
+	 * @return
+	 */
+	List<Menu> findMenuLByMN(String keywords);
+
+	/**
+	 * @param keywords
+	 * @return
+	 */
+	List<Menu> findMenuLByMD(String keywords);
+
+	/**
+	 * @param pId
+	 * @return
+	 */
+	List<Menu> findMenuByPid(String pId);
+
+	/**
+	 * <p>
+	 * 
+	 * </p>
+	 * @author zm
+	 * @Date 2018年5月30日
+	 * @param userId
+	 * @return
+	 */
+	List<Menu> queryAllMenuXZByUserId(String userId);
+
+	/**
+	 * <p>
+	 * 
+	 * </p>
+	 * @author zm
+	 * @Date 2018年5月30日
+	 * @param userId
+	 * @return
+	 */
+	List<Menu> queryMenuByUserId(String userId);
+
+	/**
+	 * <p>
+	 * 
+	 * </p>
+	 * @author zm
+	 * @Date 2018年5月30日
+	 * @param menuId
+	 * @param uId 
+	 * @return
+	 */
+	List<Menu> queryMenuSelectedSonByMenuId(String menuId, String uId);
+
+	/**
+	 * @return
+	 */
+	List<MenuPN> findMenuPNAll();
+
+	/**
+	 * @param keywords
+	 * @return
+	 */
+	List<MenuPN> findMenuPNLByMN(String keywords);
+
+	/**
+	 * @param keywords
+	 * @return
+	 */
+	List<MenuPN> findMenuPNLByMD(String keywords);
+
+	/**
+	 * @param keywords
+	 * @return
+	 */
+	List<MenuPN> findMenuPNLByPN(String keywords);
+}

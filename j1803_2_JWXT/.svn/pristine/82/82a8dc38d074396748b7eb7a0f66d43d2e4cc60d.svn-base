@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dao.system.ScoreMapper" >
+  <resultMap id="BaseResultMap" type="com.model.system.Score" >
+    <id column="score_id" property="scoreId" jdbcType="VARCHAR" />
+    <result column="t_id" property="tId" jdbcType="VARCHAR" />
+    <result column="subject_id" property="subjectId" jdbcType="VARCHAR" />
+    <result column="s_id" property="sId" jdbcType="VARCHAR" />
+    <result column="score" property="score" jdbcType="DOUBLE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    score_id, t_id, subject_id, s_id, score
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from score
+    where score_id = #{scoreId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from score
+    where score_id = #{scoreId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.model.system.Score" >
+    insert into score (score_id, t_id, subject_id, 
+      s_id, score)
+    values (#{scoreId,jdbcType=VARCHAR}, #{tId,jdbcType=VARCHAR}, #{subjectId,jdbcType=VARCHAR}, 
+      #{sId,jdbcType=VARCHAR}, #{score,jdbcType=DOUBLE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.model.system.Score" >
+    insert into score
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="scoreId != null" >
+        score_id,
+      </if>
+      <if test="tId != null" >
+        t_id,
+      </if>
+      <if test="subjectId != null" >
+        subject_id,
+      </if>
+      <if test="sId != null" >
+        s_id,
+      </if>
+      <if test="score != null" >
+        score,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="scoreId != null" >
+        #{scoreId,jdbcType=VARCHAR},
+      </if>
+      <if test="tId != null" >
+        #{tId,jdbcType=VARCHAR},
+      </if>
+      <if test="subjectId != null" >
+        #{subjectId,jdbcType=VARCHAR},
+      </if>
+      <if test="sId != null" >
+        #{sId,jdbcType=VARCHAR},
+      </if>
+      <if test="score != null" >
+        #{score,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.model.system.Score" >
+    update score
+    <set >
+      <if test="tId != null" >
+        t_id = #{tId,jdbcType=VARCHAR},
+      </if>
+      <if test="subjectId != null" >
+        subject_id = #{subjectId,jdbcType=VARCHAR},
+      </if>
+      <if test="sId != null" >
+        s_id = #{sId,jdbcType=VARCHAR},
+      </if>
+      <if test="score != null" >
+        score = #{score,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where score_id = #{scoreId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.model.system.Score" >
+    update score
+    set t_id = #{tId,jdbcType=VARCHAR},
+      subject_id = #{subjectId,jdbcType=VARCHAR},
+      s_id = #{sId,jdbcType=VARCHAR},
+      score = #{score,jdbcType=DOUBLE}
+    where score_id = #{scoreId,jdbcType=VARCHAR}
+  </update>
+</mapper>

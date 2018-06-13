@@ -1,0 +1,19 @@
+package com.service.system;
+
+import com.model.system.Place;
+
+import framework.utils.pageUtil.PagedResult;
+
+public interface PlaceService {
+
+	PagedResult<Place> getAllByPage(Integer pageNumber, Integer pageSize);
+
+	int addPlace(Place place);
+
+	int deletePlaceById(String placeId);
+
+	Place queryplaceId(String placeId);
+
+	int updatePlace(Place place);
+
+}

@@ -1,0 +1,135 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<base href="<%=basePath%>" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title></title>
+<link rel="stylesheet" href="<%=basePath%>css/pintuer.css">
+<link rel="stylesheet" href="<%=basePath%>css/admin.css">
+<script src="<%=basePath%>js/jquery.js"></script>
+<script src="<%=basePath%>js/pintuer.js"></script>
+<script type="text/javascript" src="<%=basePath%>js/kkpager/jpager.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>js/kkpager/jpager.css">
+<script type="text/javascript" src="<%=basePath%>js/kkpager/listPage.js"></script>
+<script type="text/javascript">
+        function load() {
+        	arrayPage(${pageResult.pages},${pageResult.total});
+        }
+        $(function(){
+        	$("#btn1").click(function(){
+        		$("#fm").attr("action","<%=basePath%>timeController/search.do");
+        		$("#fm").submit();
+        	});
+        })
+</script>
+<script type="text/javascript" src="<%=basePath%>view/time/listPage.js"></script>
+<script type="text/javascript"
+	src="<%=basePath%>view/time/searchLike.js"></script>
+</head>
+<body onload="load()">
+	<form method="post" action="<%=basePath%>timeController/deleteMany.do"
+		id="fm">
+		<div class="panel admin-panel">
+			<div class="panel-head">
+				<strong class="icon-reorder"> 上课时间管理</strong>
+			</div>
+			<div class="padding border-bottom">
+				<ul class="search">
+					<li>
+						<button type="button" class="button border-green" id="checkall">
+							<span class="icon-check"></span> 全选
+						</button>
+						<button type="submit" class="button border-red">
+							<span class="icon-trash-o"></span> 批量删除
+						</button> <a href="<%=basePath%>view/time/time_add.jsp"
+						class="button border-main icon-plus-square-o">增加</a> <input
+						type="text" placeholder="请输入上课时间" name="str" class="input"
+						style="width: 250px; line-height: 17px; display: inline-block" />
+						<button type="button" id="btn1"
+							class="button border-main icon-search">搜索</button>
+
+					</li>
+				</ul>
+			</div>
+			<table class="table table-hover text-center">
+				<tr>
+
+					<th width="100" style="text-align: left; padding-left: 20px;"></th>
+
+					<th>时间名</th>
+
+
+
+
+					<th colspan="2">操作</th>
+				</tr>
+				<c:forEach items="${pageResult.dataList }" var="time">
+					<tr>
+						<td style="text-align: left; padding-left: 20px;"><input
+							type="checkbox" name="ids" value="${time.timeId }" /></td>
+						<td>${time.timeName }</td>
+
+
+
+						<td><div class="button-group">
+
+								<a class="button border-main"
+									href="<%=basePath%>timeController/updateUI.do?timeId=${time.timeId }"><span
+									class="icon-edit"></span>修改</a> <a class="button border-red"
+									href="<%=basePath%>timeController/delete.do?timeId=${time.timeId }"
+									onclick="return del(1)"><span class="icon-trash-o"></span>
+									删除</a>
+							</div></td>
+					</tr>
+				</c:forEach>
+			</table>
+
+		</div>
+		<div id="jpager" align="center"></div>
+	</form>
+	<script type="text/javascript">
+		function del(id) {
+			if (confirm("您确定要删除吗?")) {
+
+			}
+		}
+
+		$("#checkall").click(function() {
+			$("input[name='ids']").each(function() {
+				if (this.checked) {
+					this.checked = false;
+				} else {
+					this.checked = true;
+				}
+			});
+		})
+
+		function DelSelect() {
+			var Checkbox = false;
+			$("input[name='ids']").each(function() {
+				if (this.checked == true) {
+					Checkbox = true;
+				}
+			});
+			if (Checkbox) {
+				var t = confirm("您确认要删除选中的内容吗？");
+				if (t == false)
+					return false;
+			} else {
+				alert("请选择您要删除的内容!");
+				return false;
+			}
+		}
+	</script>
+</body>
+</html>
